@@ -1,0 +1,192 @@
+#include<stdio.h>
+#include<string.h>
+#include <malloc.h>
+//先定义一种caipiao类型,表示一张彩票的信息，如下：
+typedef struct caipiao
+{
+int num; //表示彩票编号
+char name[30];//表示彩票名称
+int money;//表示彩票金额
+}caipiao;
+//定义一种NODE类型,表示一个结点信息，如下：
+typedef struct node
+{
+caipiao cp; //表示一张彩票的信息
+struct node *next; //表示一个NODE类型的指针
+}NODE;
+//1、写出建立一个带头结点的线性链表的函数，其中每个结点包含彩票编号，彩票名称，彩票金额这三个数据域。函数形式如下：
+NODE *creat_link(int direction)
+{
+NODE *head,*p,*tail;
+int xh,i=1;
+if(direction==1) //当direction的值为1时，新建立的结点连到尾部
+{
+tail=head=(NODE *)malloc(sizeof(NODE));
+head->next=NULL;
+printf("请输入第%d张彩票的编号：",i);
+scanf("%d",&xh);
+while(xh>0) //从键盘临时输入彩票情况，当输入的彩票编号非正，则链表建立完毕
+{
+p=(NODE *)malloc(sizeof(NODE));
+p->cp.num=xh;
+printf("请输入第%d张彩票的名称：",i);
+scanf("%s",p->cp.name);
+printf("请输入第%d张彩票的金额：",i);
+scanf("%d",&p->cp.money);
+p->next=NULL;
+tail->next=p;
+tail=p;
+i=i+1;
+printf("请输入第%d张彩票的编号：",i);
+scanf("%d",&xh);
+}
+}
+else if(direction==0) //当direction为0时，新建立的结点成为第一个结点
+{
+head=(NODE *)malloc(sizeof(NODE));
+head->next=NULL;
+printf("请输入第%d张彩票的编号：",i);
+scanf("%d",&xh);
+while(xh>0) //从键盘临时输入彩票情况，当输入的彩票编号非正，则链表建立完毕
+{
+p=(NODE *)malloc(sizeof(NODE));
+p->cp.num=xh;
+printf("请输入第%d张彩票的名称：",i);
+scanf("%s",p->cp.name);
+printf("请输入第%d张彩票的的金额：",i);
+scanf("%d",&p->cp.money);
+p->next=head->next;
+head->next=p;
+i=i+1;
+printf("请输入第%d张彩票的的编号：",i);
+scanf("%d",&xh);
+}
+}
+return head;
+}
+//2、写出输出上述链表各结点数据域值的函数。该函数对应的函数需要一个形参，表示链表的头指针，形式如下：
+void print_link(NODE *head)
+{
+NODE *p;
+p=head->next;
+printf("%-10s%-20s%-10s\n","编号","名称","金额");
+while(p!=NULL)
+{
+printf("%-10d%-20s%-10.1d\n",p->cp.num,p->cp.name,p->cp.money);
+p=p->next;
+}
+//该函数能输出head所指的链表的所有结点值，输出形式如下：
+/*本函数输出线性表sq中所有数据，形式如下：
+编号 名称 金额
+12 友善 666.6
+18 和谐 888.8
+……… ……… …….*/
+}
+//3、写出在链表中删除结点的函数
+int del_link(NODE *head,char name[])
+{
+NODE *p,*p1;
+p=head->next;
+p1=head;
+while(p!=NULL)
+{
+if(strcmp(p->cp.name,name)!=0)
+{
+p1=p;
+p=p->next;
+}
+else
+{
+break;
+}
+}
+if(p!=NULL)
+{
+p1->next=p->next;
+free(p);
+return 1;
+}
+else
+{
+return 0;
+}
+//删除head所指的链表中，名字为name的结点，删除成功返回1，不成功返回0
+}
+//4、写出在链表中插入结点的算法
+int insert(NODE *head,caipiao x,int wz)
+{
+NODE *p=head;
+int i=0,jg;
+if(wz<=0)
+{
+jg=0;
+}
+else
+{
+while(i<wz-1&&p!=NULL)
+{
+i++;
+p=p->next;
+}
+if(p==NULL)
+{
+jg=0;
+}
+if(i=wz-1)
+{
+//找到wz前面的节点，p指向它
+NODE *q;
+q=(NODE *)malloc(sizeof(NODE));
+q->cp.num=x.num;
+strcpy(q->cp.name,x.name);
+q->cp.money=x.money;
+q->next=p->next;
+p->next=q;
+jg=1;
+}
+}
+return jg;
+//该函数能够在wz这个结点之前，插入一个新结点，新结点的数据域为x。插入成功返回1，不成功返回0。
+}
+//5、写出主函数，分别调用上面算法所对应的程序，建立链表，并输出链表的值。
+void main()
+{
+NODE *head; //定义指针变量head
+int wz; //表示插入位置
+char xm[30];
+caipiao cp; //定义一个变量st，用来表示一个学生的信息
+head=creat_link(1);
+print_link(head); //调用函数建立链表，并把返回值送给head;
+//调用函数，输出链表中各个结点的值
+//输入一个学生的有关信息，送给变量st的有关成员
+printf("\n\n请输入要插入的位置：");
+scanf("%d",&wz); //输入wz的值
+printf("请输入要插入的彩票的编号：");
+scanf("%d",&cp.num);
+printf("请输入要插入的彩票的名称：");
+scanf("%s",cp.name);
+printf("请输入要插入的彩票的金额：");
+scanf("%d",&cp.money); 
+//调用函数，在链表中把彩票cp的值作为一个结点插入,如果插入成功，输出新链表
+if(insert(head,cp,wz)==1)
+{
+printf("\n插入成功，新表为：\n");
+print_link(head);
+}
+else
+{
+printf("插入不成功");
+}
+//调用函数，在链表中删除一个指定结点的值,如果删除成功，输出新链表
+printf("\n\n请输入要删除的彩票的名称：");
+getchar();
+if(del_link(head,xm)==1)
+{
+printf("\n删除成功，新表为：\n");
+print_link(head);
+}
+else
+{
+printf("删除不成功");
+}
+}
